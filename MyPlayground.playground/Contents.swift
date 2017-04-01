@@ -1,7 +1,7 @@
 //: Playground - noun: a place where people can play
 
 import UIKit
-//@testable import GamePlayground
+
 import PlaygroundSupport
 import SpriteKit
 
@@ -24,7 +24,7 @@ var str = "Hello, playground"
 //controller.present()
 
 //let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-
+ 
 
 let s = GameViewController.loadFromStoryboard()
 PlaygroundPage.current.liveView = s

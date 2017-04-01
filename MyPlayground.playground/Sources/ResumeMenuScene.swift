@@ -1,10 +1,5 @@
-//
-//  MainMenuScene.swift
-//  Fruit Eater
-//
-//  Created by MacBook on 10/6/16.
-//  Copyright © 2016 Awesome Tuts. All rights reserved.
-//
+//  Created by Ahmad Iqbal on 4/1/17.
+//  Copyright © 2017 Ahmad Iqbal. All rights reserved.
 
 import SpriteKit
 
@@ -61,8 +56,8 @@ class ResumeMenuScene: SKScene {
                     view!.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(0)));
                 }
                 
-                      self.scene?.view?.isPaused = false;
-                    
+                self.scene?.view?.isPaused = false;
+                
                 
                 
                 
@@ -74,73 +69,32 @@ class ResumeMenuScene: SKScene {
                     // Set the scale mode to scale to fit the window
                     scene.scaleMode = .aspectFill
                     
-                      view!.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(1)));
+                    view!.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(1)));
                 }
             }
             
-                if atPoint(location).name == "Exit" {
-                    if let scene = MainMenuScene(fileNamed: "MainMenu") {
-                        // Set the scale mode to scale to fit the window
-                        scene.scaleMode = .aspectFill
-                        
-                        // Present the scene
-                        view!.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(1)));
-                        
-                        
-                    }
+            if atPoint(location).name == "Exit" {
+                if let scene = MainMenuScene(fileNamed: "MainMenu") {
+                    // Set the scale mode to scale to fit the window
+                    scene.scaleMode = .aspectFill
+                    
+                    // Present the scene
+                    view!.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(1)));
+                    
+                    
+                }
+                
+                
+                
+                
+                
+            }
             
-            
-            
-           
             
         }
         
         
     }
     
-    
 }
-
-}
-
-
-// class
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

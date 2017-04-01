@@ -1,11 +1,5 @@
-//
-//  PoweBar.swift
-//  Fruit Eater
-//
-//  Created by Ahmad Iqbal on 3/25/17.
-//  Copyright © 2017 Awesome Tuts. All rights reserved.
-//
-
+//  Created by Ahmad Iqbal on 4/1/17.
+//  Copyright © 2017 Ahmad Iqbal. All rights reserved.
 
 
 import SpriteKit
@@ -56,5 +50,5 @@ class IMProgressBar : SKNode{
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-}
+    }
 }

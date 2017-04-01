@@ -1,14 +1,9 @@
-//
-//  Player.swift
-//  Fruit Eater
-//
-//  Created by MacBook on 10/6/16.
-//  Copyright © 2016 Awesome Tuts. All rights reserved.
-//
+//  Created by Ahmad Iqbal on 4/1/17.
+//  Copyright © 2017 Ahmad Iqbal. All rights reserved.
 
 import SpriteKit
 
-class Player: SKSpriteNode {
+public class Player: SKSpriteNode {
     
     private var minX = CGFloat(-200), maxX = CGFloat(200);
     

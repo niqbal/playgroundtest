@@ -1,10 +1,5 @@
-//
-//  GameplaySceneClass.swift
-//  Fruit Eater
-//
-//  Created by MacBook on 10/6/16.
-//  Copyright © 2016 Awesome Tuts. All rights reserved.
-//
+//  Created by Ahmad Iqbal on 4/1/17.
+//  Copyright © 2017 Ahmad Iqbal. All rights reserved.
 
 import SpriteKit
 
@@ -19,9 +14,9 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
     public var w : CGFloat =  225;
     public var x : CGFloat =  32;
     public var canMove = false, moveLeft = false;
-    
+    private var pausePanel: SKSpriteNode?
     public var itemController = ItemController();
-    
+    public var Pausenum : CGFloat = 0;
     public var scoreLabel: SKLabelNode?;
     public var score = 0;
     var count = 0;
@@ -34,13 +29,7 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func didMove(to view: SKView) {
-        //        let barra = SKShapeNode(rectOf: CGSize(width: w, height: 32.565))
-        //        barra.name = "bar"
-        //        barra.fillColor = SKColor.green
-        //        barra.position.x = x;
-        //        barra.position.y=360.565;
-        //        barra.zPosition=6;
-        //        self.addChild(barra)
+        
         initializeGame();
         
         
@@ -61,27 +50,48 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
                 moveLeft = true;
             }
             
-            if atPoint(location).name == "Pause"{
+            if nodes(at: location)[0].name == "Pause" {
+                createPausePanel();
                 
-                self.scene?.isPaused = true;
-                
-                if let scene = ResumeMenuScene(fileNamed: "ResumeMenu") {
-                    // Set the scale mode to scale to fit the window
-                    scene.scaleMode = .aspectFill
-                    
-                    // Present the scene
-                    view!.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(0)));
+                let pauseAction = SKAction.run {
+                    self.view?.isPaused = true
                     
                     
                 }
+                self.run(pauseAction)
+                
+                
+            }
+            
+            if nodes(at: location)[0].name == "Resume" {
+                Pausenum=0
+                self.pausePanel?.removeFromParent();
+                
+                let pauseAction = SKAction.run {
+                    self.view?.isPaused = false
+                    
+                    
+                }
+                self.run(pauseAction)
                 
                 
                 
             }
             
+            if nodes(at: location)[0].name == "exit" {
+                
+                Pausenum=0
+                self.view?.isPaused = false
+                print("ahmad")
+                let scene = MainMenuScene(fileNamed: "MainMenu");
+                scene?.scaleMode = SKSceneScaleMode.aspectFill;
+                self.view?.presentScene(scene!, transition: SKTransition.doorsCloseVertical(withDuration: 1));
+            }
+            
+            
             
         }
-        //self.scene?.view?.isPaused = true;
+        
         canMove = true;
         
         
@@ -93,18 +103,9 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
     
     func didBegin(_ contact: SKPhysicsContact) {
         
-        //        let barra = SKShapeNode(rectOf: CGSize(width: w, height: 32.565))
-        //        barra.name = "bar"
-        //        barra.fillColor = SKColor.green
-        //        barra.position.x = x;
-        //        barra.position.y=360.565;
-        //        barra.zPosition=6;
-        //        self.addChild(barra)
-        //
-        
         var firstBody = SKPhysicsBody();
         var secondBody = SKPhysicsBody();
-        //  childNode(withName: "power")?.xScale = 1;
+        
         
         if contact.bodyA.node?.name == "Player" {
             firstBody = contact.bodyA;
@@ -122,17 +123,6 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
         
         if (firstBody.node?.name)! == "Player" && (secondBody.node?.name == "Alpha 1" || secondBody.node?.name == "Alpha 5" || secondBody.node?.name == "Alpha 7" || secondBody.node?.name == "Alpha 14" || secondBody.node?.name == "Bomb" || secondBody.node?.name == "Alpha 18" || secondBody.node?.name == "Alpha 15") {
             
-            
-            print(firstBody.node?.name);
-            print(secondBody.node?.name);
-            
-            AudioManager.instance.stopBGMusic();
-            
-            self.run(SKAction.playSoundFileNamed("coin.ogg", waitForCompletion: false));
-            AudioManager.instance.stopBGMusic();
-            
-            
-            
             if(secondBody.node?.name=="Alpha 1" && n1==0){
                 
                 childNode(withName:"a")?.alpha=1;
@@ -141,11 +131,10 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
                 scoreLabel?.text = String(score);
                 secondBody.node?.removeFromParent();
                 n1+=1;
-                //  AudioManager.instance.stopBGMusic();
                 self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
-                self.run(SKAction.playSoundFileNamed("Explosion.wav", waitForCompletion: false));
-                //AudioManager.instance.stopBGMusic();
+                self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
                 
+                AudioManager.instance.playBGMusic();
             }
             
             if(secondBody.node?.name=="Alpha 5" && n2==0){
@@ -156,10 +145,10 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
                 scoreLabel?.text = String(score);
                 secondBody.node?.removeFromParent();
                 n2+=1;
-                // AudioManager.instance.stopBGMusic();
-                self.run(SKAction.changeVolume(to: Float(1), duration: 0.5))
-                self.run(SKAction.playSoundFileNamed("coin.ogg", waitForCompletion: false));
-                // AudioManager.instance.stopBGMusic();
+                self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
+                self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
+                
+                AudioManager.instance.playBGMusic();
                 
             }
             
@@ -171,10 +160,10 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
                 scoreLabel?.text = String(score);
                 secondBody.node?.removeFromParent();
                 n3+=1;
-                AudioManager.instance.stopBGMusic();
+                self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
+                self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
                 
-                self.run(SKAction.playSoundFileNamed("coin.ogg", waitForCompletion: false));
-                AudioManager.instance.stopBGMusic();
+                AudioManager.instance.playBGMusic();
                 
             }
             
@@ -186,11 +175,10 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
                 scoreLabel?.text = String(score);
                 secondBody.node?.removeFromParent();
                 n4+=1;
-                AudioManager.instance.stopBGMusic();
+                self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
+                self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
                 
-                self.run(SKAction.playSoundFileNamed("coin.ogg", waitForCompletion: false));
-                AudioManager.instance.stopBGMusic();
-                
+                AudioManager.instance.playBGMusic();
             }
             
             if(secondBody.node?.name=="Alpha 18" && n5==0){
@@ -203,7 +191,10 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
                 n5+=1;
                 
                 
-                self.run(SKAction.playSoundFileNamed("coin.ogg", waitForCompletion: false));
+                self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
+                self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
+                
+                AudioManager.instance.playBGMusic();
                 
                 
             }
@@ -217,7 +208,10 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
                 n6+=1;
                 
                 
-                self.run(SKAction.playSoundFileNamed("coin.ogg", waitForCompletion: false));
+                self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
+                self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
+                
+                AudioManager.instance.playBGMusic();
                 
                 
             }
@@ -230,16 +224,9 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
                 childNode(withName: "Bar")?.xScale = t;
                 
                 
-                AudioManager.instance.stopBGMusic();
-                
+                self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
                 self.run(SKAction.playSoundFileNamed("Explosion.wav", waitForCompletion: false));
-                AudioManager.instance.stopBGMusic();
-                //AudioManager.instance.stopBGMusic();
-                //  AudioManager.instance.stopBGMusic();
-                
-                
                 AudioManager.instance.playBGMusic();
-                
                 
             }
             
@@ -249,7 +236,7 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
             if(count==6){
                 
                 if let scene = NextMenu(fileNamed: "NextMenu") {
-                    // Set the scale mode to scale to fit the window
+                    
                     scene.scaleMode = .aspectFill
                     
                     // Present the scene
@@ -267,20 +254,17 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
             
             
         else  {
-            // firstBody.node?.removeFromParent();
             
+            self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
+            self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
             
             AudioManager.instance.playBGMusic();
             
-            //           if (firstBody.node?.name) == "Player" && (secondBody.node?.name != "Alpha 1" && secondBody.node?.name != "Alpha (5)" && secondBody.node?.name != "Alpha 12" && secondBody.node?.name != "Alpha 16)")  {
             
-            // print(firstBody.node?.name);
-            // print(secondBody.node?.name);
             t=t-0.05;
             
             childNode(withName: "Bar")?.xScale = t;
             
-            // }
             
             if(t<0.1){
                 
@@ -299,7 +283,6 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
         
         
     }
-    
     
     
     private func initializeGame() {
@@ -326,13 +309,69 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    
+    private func createPausePanel() {
+        
+        Pausenum=1;
+        
+        pausePanel = SKSpriteNode(imageNamed: "Pause Menu");
+        let resumeBtn = SKSpriteNode(imageNamed: "Resume");
+        let quitBtn = SKSpriteNode(imageNamed: "exit");
+        
+        pausePanel?.anchorPoint = CGPoint(x: 0.5, y: 0.5);
+        pausePanel?.xScale = 1.6;
+        pausePanel?.yScale = 1.3;
+        pausePanel?.zPosition = 10;
+        
+        pausePanel?.position = CGPoint(x: -0, y: 0);
+        
+        resumeBtn.name = "Resume";
+        resumeBtn.zPosition = 16;
+        resumeBtn.anchorPoint = CGPoint(x: 0.5, y: 0.5);
+        resumeBtn.size = CGSize(width: 100, height: 60);
+        resumeBtn.position = CGPoint(x: pausePanel!.position.x, y: pausePanel!.position.y + 50);
+        
+        quitBtn.name = "exit";
+        quitBtn.zPosition = 16;
+        quitBtn.anchorPoint = CGPoint(x: 0.5, y: 0.5);
+        quitBtn.size = CGSize(width: 100, height: 60)
+        quitBtn.position = CGPoint(x: pausePanel!.position.x, y: pausePanel!.position.y - 20);
+        
+        pausePanel?.addChild(resumeBtn);
+        pausePanel?.addChild(quitBtn);
+        
+        self.addChild(pausePanel!);
+        
+        
+    }
+    
+    
     func spawnItems() {
         
-        let randomNum:UInt32 = arc4random_uniform(1);
         
-        for _ in 0...randomNum{
+        
+        if(Pausenum==1)
+        {
             
-            self.scene?.addChild(itemController.spawnItems());
+            
+            self.view?.isPaused = true
+            
+        }
+            
+        else {
+            Pausenum=0;
+            
+            self.view?.isPaused = false
+            
+            let randomNum:UInt32 = arc4random_uniform(1);
+            
+            for _ in 0...randomNum{
+                
+                self.scene?.addChild(itemController.spawnItems());
+                
+                
+            }
+            
             
         }
     }
@@ -361,42 +400,4 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
     
     
 } // class
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

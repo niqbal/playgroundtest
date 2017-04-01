@@ -1,15 +1,10 @@
-//
-//  MainMenuScene.swift
-//  Fruit Eater
-//
-//  Created by MacBook on 10/6/16.
-//  Copyright © 2016 Awesome Tuts. All rights reserved.
-//
+//  Created by Ahmad Iqbal on 4/1/17.
+//  Copyright © 2017 Ahmad Iqbal. All rights reserved.
 
 import SpriteKit
 
 class MainMenuScene: SKScene {
-
+    
     var BackGroundMusic: SKAudioNode!;
     private var musicBtn: SKSpriteNode?;
     private var musicOn = SKTexture(imageNamed: "Music On Button");
@@ -42,8 +37,8 @@ class MainMenuScene: SKScene {
         }
         GameManager.instance.saveData();
     }
-
-
+    
+    
     
     
     
@@ -53,7 +48,7 @@ class MainMenuScene: SKScene {
             let location = touch.location(in: self);
             
             if atPoint(location).name == "Start" {
-                if let scene = GameplaySceneClass(fileNamed: "GameplayScene") {
+                if let scene = GameplaySceneClass(fileNamed: "GameplayScene"){
                     // Set the scale mode to scale to fit the window
                     scene.scaleMode = .aspectFill
                     
@@ -66,12 +61,22 @@ class MainMenuScene: SKScene {
             
             
             
-            if nodes(at: location)[0].name == "Music" {
-                handleMusicButton();
+            if atPoint(location).name == "How To Play" {
+                if let scene = HowToPlay(fileNamed: "HowToPlay") {
+                    // Set the scale mode to scale to fit the window
+                    scene.scaleMode = .aspectFill
+                    
+                    // Present the scene
+                    view!.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(1)));
+                }
+                
+                
             }
-        
-            }
-
+            
+            
+            
+            
+            
             
         }
         
@@ -80,7 +85,7 @@ class MainMenuScene: SKScene {
     
     
     
- // class
+} // class
 
 
 

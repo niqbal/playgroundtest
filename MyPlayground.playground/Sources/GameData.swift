@@ -1,10 +1,5 @@
-//
-//  GameData.swift
-//  Jack The Giant
-//
-//  Created by Fahir Mehovic on 2/17/16.
-//  Copyright © 2016 Awesome Tuts. All rights reserved.
-//
+//  Created by Ahmad Iqbal on 4/1/17.
+//  Copyright © 2017 Ahmad Iqbal. All rights reserved.
 
 import Foundation
 
@@ -166,36 +161,3 @@ class GameData: NSObject, NSCoding {
     }
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

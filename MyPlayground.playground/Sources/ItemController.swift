@@ -1,10 +1,5 @@
-//
-//  ItemController.swift
-//  Fruit Eater
-//
-//  Created by MacBook on 10/7/16.
-//  Copyright © 2016 Awesome Tuts. All rights reserved.
-//
+//  Created by Ahmad Iqbal on 4/1/17.
+//  Copyright © 2017 Ahmad Iqbal. All rights reserved.
 
 import SpriteKit
 

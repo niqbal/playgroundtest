@@ -1,17 +1,16 @@
-//
-//  GameplaySceneClass.swift
-//  Fruit Eater
-//
-//  Created by MacBook on 10/6/16.
-//  Copyright © 2016 Awesome Tuts. All rights reserved.
-//
+//  Created by Ahmad Iqbal on 4/1/17.
+//  Copyright © 2017 Ahmad Iqbal. All rights reserved.
 
+import UIKit
 import SpriteKit
+import GameplayKit
+import PlaygroundSupport
 
-public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
+class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
     
-     var player: Player?;
-     var iMProgressBar: IMProgressBar?;
+    var player: Player?
+    
+    public var iMProgressBar: IMProgressBar?;
      var item: SKSpriteNode?;
     public var center = CGFloat();
     public var t : CGFloat =  0.5;
@@ -19,8 +18,12 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
      public var w : CGFloat =  225;
     public var x : CGFloat =  32;
     public var canMove = false, moveLeft = false;
+   
+    private var pausePanel: SKSpriteNode?
+    private var minX = CGFloat(-200), maxX = CGFloat(200);
+
     
-    var itemController = ItemController();
+    public var itemController = ItemController();
     
     public var scoreLabel: SKLabelNode?;
     public var score = 0;
@@ -30,17 +33,12 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
     var n3=0;
     var n4=0;
     var n5=0;
+    public var Pausenum : CGFloat = 0;
    
     
-    override public func didMove(to view: SKView) {
-//        let barra = SKShapeNode(rectOf: CGSize(width: w, height: 32.565))
-//        barra.name = "bar"
-//        barra.fillColor = SKColor.green
-//        barra.position.x = x;
-//        barra.position.y=360.565;
-//        barra.zPosition=6;
-//        self.addChild(barra)
-        initializeGame();
+    override func didMove(to view: SKView) {
+
+    initializeGame();
    
         
     }
@@ -49,7 +47,7 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
         managePlayer();
     }
     
-    override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         for touch in touches {
             let location = touch.location(in: self);
@@ -60,23 +58,52 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
                 moveLeft = true;
             }
             
-            if atPoint(location).name == "Pause"{
+            if nodes(at: location)[0].name == "Pause" {
+                createPausePanel();
                 
-                self.scene?.isPaused = true;
-                
-                if let scene = ResumeMenuScene(fileNamed: "ResumeMenu") {
-                    // Set the scale mode to scale to fit the window
-                    scene.scaleMode = .aspectFill
-                    
-                    // Present the scene
-                    view!.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(0)));
+                let pauseAction = SKAction.run {
+                    self.view?.isPaused = true
                     
                     
                 }
-         
-               
-              
+                self.run(pauseAction)
+
+                
+                
+                
+              //  self.view?.isPaused = true;
+                
             }
+            
+            if nodes(at: location)[0].name == "Resume" {
+                Pausenum=0
+                self.pausePanel?.removeFromParent();
+                
+                let pauseAction = SKAction.run {
+                    self.view?.isPaused = false
+                    
+                    
+                }
+                self.run(pauseAction)
+                
+                
+                
+            }
+            
+            if nodes(at: location)[0].name == "exit" {
+//                let pauseAction = SKAction.run {
+//                    self.view?.isPaused = false
+//                    
+//                    
+//                }
+              Pausenum=0
+                self.view?.isPaused = false
+                print("ahmad")
+                let scene = MainMenuScene(fileNamed: "MainMenu");
+                scene?.scaleMode = SKSceneScaleMode.aspectFill;
+                self.view?.presentScene(scene!, transition: SKTransition.doorsCloseVertical(withDuration: 1));
+            }
+
             
             
         }
@@ -86,20 +113,12 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
         
 }
     
-     override public func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         canMove = false;
     }
     
-     public func didBegin(_ contact: SKPhysicsContact) {
+     func didBegin(_ contact: SKPhysicsContact) {
         
-//        let barra = SKShapeNode(rectOf: CGSize(width: w, height: 32.565))
-//        barra.name = "bar"
-//        barra.fillColor = SKColor.green
-//        barra.position.x = x;
-//        barra.position.y=360.565;
-//        barra.zPosition=6;
-//        self.addChild(barra)
-//        
         
         var firstBody = SKPhysicsBody();
         var secondBody = SKPhysicsBody();
@@ -122,12 +141,12 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
         if (firstBody.node?.name)! == "Player" && (secondBody.node?.name == "Alpha 1" || secondBody.node?.name == "Alpha 5" || secondBody.node?.name == "Alpha 12" || secondBody.node?.name == "Alpha 16" || secondBody.node?.name == "Bomb") {
      
           
-            print(firstBody.node?.name);
-            print(secondBody.node?.name);
+           // print(firstBody.node?.name);
+           // print(secondBody.node?.name);
 
             AudioManager.instance.stopBGMusic();
             
-            self.run(SKAction.playSoundFileNamed("coin.ogg", waitForCompletion: false));
+            self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
             AudioManager.instance.stopBGMusic();
         
            
@@ -140,10 +159,11 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
                 scoreLabel?.text = String(score);
                 secondBody.node?.removeFromParent();
                 n1+=1;
-              //  AudioManager.instance.stopBGMusic();
+              
                 self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
-                self.run(SKAction.playSoundFileNamed("Explosion.wav", waitForCompletion: false));
-                //AudioManager.instance.stopBGMusic();
+                self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
+                
+                 AudioManager.instance.playBGMusic();
                 
             }
             
@@ -155,11 +175,10 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
                 scoreLabel?.text = String(score);
                 secondBody.node?.removeFromParent();
                 n2+=1;
-               // AudioManager.instance.stopBGMusic();
-                self.run(SKAction.changeVolume(to: Float(1), duration: 0.5))
-                self.run(SKAction.playSoundFileNamed("coin.ogg", waitForCompletion: false));
-               // AudioManager.instance.stopBGMusic();
+                self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
+                self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
                 
+                AudioManager.instance.playBGMusic();
             }
             
             if(secondBody.node?.name=="Alpha 12" && n3==0){
@@ -170,10 +189,10 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
                 scoreLabel?.text = String(score);
                 secondBody.node?.removeFromParent();
                 n3+=1;
-                AudioManager.instance.stopBGMusic();
+                self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
+                self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
                 
-                self.run(SKAction.playSoundFileNamed("coin.ogg", waitForCompletion: false));
-                AudioManager.instance.stopBGMusic();
+                AudioManager.instance.playBGMusic();
                 
             }
             
@@ -185,11 +204,10 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
                 scoreLabel?.text = String(score);
                 secondBody.node?.removeFromParent();
                 n4+=1;
-                AudioManager.instance.stopBGMusic();
+                self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
+                self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
                 
-                self.run(SKAction.playSoundFileNamed("coin.ogg", waitForCompletion: false));
-                AudioManager.instance.stopBGMusic();
-                
+                AudioManager.instance.playBGMusic();
             }
             
             if(secondBody.node?.name=="Alpha 16" && n5==0){
@@ -202,7 +220,10 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
                 n5+=1;
               
                 
-                self.run(SKAction.playSoundFileNamed("coin.ogg", waitForCompletion: false));
+                self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
+                self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
+                
+                AudioManager.instance.playBGMusic();
               
                 
             }
@@ -215,15 +236,12 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
                 childNode(withName: "Bar")?.xScale = t;
                 
                 
-                AudioManager.instance.stopBGMusic();
-                
+                self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
                 self.run(SKAction.playSoundFileNamed("Explosion.wav", waitForCompletion: false));
-                AudioManager.instance.stopBGMusic();
-                //AudioManager.instance.stopBGMusic();
-                //  AudioManager.instance.stopBGMusic();
-                
-                
                 AudioManager.instance.playBGMusic();
+                
+                
+             
                 
                 
             }
@@ -252,20 +270,17 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
         
             
        else  {
-           // firstBody.node?.removeFromParent();
             
+            self.run(SKAction.changeVolume(to: Float(0.4), duration: 0.2))
+            self.run(SKAction.playSoundFileNamed("coin.mp3", waitForCompletion: false));
             
             AudioManager.instance.playBGMusic();
-            
-//           if (firstBody.node?.name) == "Player" && (secondBody.node?.name != "Alpha 1" && secondBody.node?.name != "Alpha (5)" && secondBody.node?.name != "Alpha 12" && secondBody.node?.name != "Alpha 16)")  {
-            
-           // print(firstBody.node?.name);
-           // print(secondBody.node?.name);
+
+      
                 t=t-0.05;
                 
                childNode(withName: "Bar")?.xScale = t;
            
-           // }
             
             if(t<0.1){
                 
@@ -287,17 +302,30 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
     
 
     
-    private func initializeGame() {
+    
+    public func initializeGame() {
         
+        
+       
+//        var barra = SKSpriteNode(imageNamed: "Player");
+//        barra.name = "Player"
+//        self.addChild(barra);
+//        barra.zPosition=3;
+      
         physicsWorld.contactDelegate = self;
-        
         player = childNode(withName: "Player") as? Player!;
+        
+     //   self.addChild(player!);
+        
+        print(player?.name)
         player?.initializePlayer();
+        print(player?.name)
+        
         
         scoreLabel = childNode(withName: "ScoreLabel") as? SKLabelNode!;
         scoreLabel?.text = "0";
         
-        center = self.frame.size.width / self.frame.size.height;
+         center = self.frame.size.width / self.frame.size.height;
         
         Timer.scheduledTimer(timeInterval: TimeInterval(itemController.randomBetweenNumbers(firstNum: 1, secondNum: 2)), target: self, selector: #selector(GameplaySceneClass.spawnItems), userInfo: nil, repeats: true);
         
@@ -305,19 +333,78 @@ public class GameplaySceneClass: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    private func managePlayer() {
+    
+    private func createPausePanel() {
+        
+        Pausenum=1;
+
+        pausePanel = SKSpriteNode(imageNamed: "Pause Menu");
+        let resumeBtn = SKSpriteNode(imageNamed: "Resume");
+        let quitBtn = SKSpriteNode(imageNamed: "exit");
+        
+        pausePanel?.anchorPoint = CGPoint(x: 0.5, y: 0.5);
+        pausePanel?.xScale = 1.6;
+        pausePanel?.yScale = 1.3;
+        pausePanel?.zPosition = 10;
+        
+        pausePanel?.position = CGPoint(x: -0, y: 0);
+        
+        resumeBtn.name = "Resume";
+        resumeBtn.zPosition = 16;
+        resumeBtn.anchorPoint = CGPoint(x: 0.5, y: 0.5);
+        resumeBtn.size = CGSize(width: 100, height: 60);
+        resumeBtn.position = CGPoint(x: pausePanel!.position.x, y: pausePanel!.position.y + 50);
+        
+        quitBtn.name = "exit";
+        quitBtn.zPosition = 16;
+        quitBtn.anchorPoint = CGPoint(x: 0.5, y: 0.5);
+        quitBtn.size = CGSize(width: 100, height: 60)
+        quitBtn.position = CGPoint(x: pausePanel!.position.x, y: pausePanel!.position.y - 20);
+        
+        pausePanel?.addChild(resumeBtn);
+        pausePanel?.addChild(quitBtn);
+        
+        self.addChild(pausePanel!);
+       
+        
+    }
+    
+    
+    
+    public func managePlayer() {
         if canMove {
             player?.move(left: moveLeft);
         }
     }
     
+    
+    
     func spawnItems() {
      
-        let randomNum:UInt32 = arc4random_uniform(1);
-        
-        for _ in 0...randomNum{
-        
-        self.scene?.addChild(itemController.spawnItems());
+       
+            
+          if(Pausenum==1)
+          {
+            
+            
+          self.view?.isPaused = true
+            
+          }
+            
+          else {
+            Pausenum=0;
+            
+             self.view?.isPaused = false
+            
+            let randomNum:UInt32 = arc4random_uniform(1);
+            
+            for _ in 0...randomNum{
+                
+                self.scene?.addChild(itemController.spawnItems());
+            
+           
+            }
+            
     
         }
     }

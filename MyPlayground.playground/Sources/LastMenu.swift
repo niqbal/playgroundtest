@@ -3,25 +3,12 @@
 
 import SpriteKit
 
-class GameOverScene: SKScene{
-    
-    
+class LastMenu: SKScene {
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         for touch in touches {
             let location = touch.location(in: self);
-            
-            if atPoint(location).name == "Restart" {
-                if let scene = GameplaySceneClass(fileNamed: "GameplayScene") {
-                    // Set the scale mode to scale to fit the window
-                    scene.scaleMode = .aspectFill
-                    
-                    // Present the scene
-                    view!.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(1)));
-                }
-                
-                
-            }
             
             if atPoint(location).name == "exit" {
                 if let scene = MainMenuScene(fileNamed: "MainMenu") {
@@ -30,19 +17,14 @@ class GameOverScene: SKScene{
                     
                     // Present the scene
                     view!.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(1)));
+                    
                 }
                 
                 
-            }
-            
-            
-            
-            
-            
-        }
-        
-        
-    }
-    
-    
+          }
+
+     }
+
+   }
+
 }
